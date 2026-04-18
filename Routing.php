@@ -49,6 +49,7 @@ class Routing
         self::get('',                   'AuthController',      'loginPage');
         self::get('login',              'AuthController',      'loginPage');
         self::get('register',           'AuthController',      'registerPage');
+        self::get('logout',             'AuthController',      'logout');
         self::get('dashboard',          'DashboardController', 'index');
         self::get('incidents',          'IncidentController',  'listPage');
         self::get('incidents/report',   'IncidentController',  'reportPage');

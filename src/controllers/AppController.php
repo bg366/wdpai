@@ -6,6 +6,13 @@ abstract class AppController
 
     protected function render(string $view): void
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+
         $path = self::VIEWS_PATH . $view;
         if (!file_exists($path)) {
             http_response_code(404);
@@ -68,5 +75,14 @@ abstract class AppController
     {
         $raw = file_get_contents('php://input');
         return json_decode($raw, true) ?? [];
+    }
+
+    protected function validateCsrf(): bool
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        return !empty($token) && hash_equals($_SESSION['csrf_token'] ?? '', $token);
     }
 }

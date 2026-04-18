@@ -49,9 +49,10 @@ abstract class Repository
         return $this->query($sql, $params)->rowCount();
     }
 
+    // SQL musi kończyć się: RETURNING id
     protected function insert(string $sql, array $params = []): int
     {
-        $this->query($sql, $params);
-        return (int) $this->db()->lastInsertId();
+        $result = $this->fetchOne($sql, $params);
+        return $result ? (int) $result['id'] : 0;
     }
 }

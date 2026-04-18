@@ -1,1 +1,53 @@
-<h1>Login</h1>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+  <title>Logowanie — SafeCity</title>
+  <link rel="stylesheet" href="/public/css/main.css">
+</head>
+<body class="auth-page">
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 1L3 5v6c0 5.25 3.75 10.15 9 11.35C17.25 21.15 21 16.25 21 11V5l-9-4z"/>
+        </svg>
+      </div>
+      <h1>SafeCity</h1>
+      <p>System zgłaszania incydentów</p>
+    </div>
+
+    <div class="alert alert--success hidden" id="success-msg"></div>
+    <div class="alert alert--error hidden"   id="general-error"></div>
+
+    <form id="login-form" novalidate>
+      <div class="form-group">
+        <label for="email">Adres email</label>
+        <input type="email" id="email" name="email" autocomplete="email"
+               placeholder="jan@przyklad.pl" required>
+        <span class="field-error" id="email-error"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Hasło</label>
+        <input type="password" id="password" name="password"
+               autocomplete="current-password" placeholder="••••••••" required>
+        <span class="field-error" id="password-error"></span>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--full" id="submit-btn">
+        Zaloguj się
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      Nie masz konta? <a href="/register">Zarejestruj się</a>
+    </p>
+  </div>
+
+  <script src="/public/js/auth.js"></script>
+</body>
+</html>
