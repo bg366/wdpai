@@ -1,4 +1,9 @@
 .vscode
 .vs
-config.php
 .idea
+.DS_Store
+.claude/
+.env
+.env.*
+!.env.example
+config.php

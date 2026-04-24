@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-  <title>Panel — SafeCity</title>
+  <title>Szczegóły zgłoszenia — SafeCity</title>
   <link rel="stylesheet" href="/public/css/main.css">
 </head>
 <body class="app-page">
   <div id="app-root"></div>
   <script id="app-bootstrap" type="application/json"><?= json_encode([
-    'page' => 'dashboard',
+    'page' => 'incident-detail',
     'user' => [
       'name' => $_SESSION['user_name'] ?? 'Użytkownik',
       'email' => $_SESSION['user_email'] ?? '',

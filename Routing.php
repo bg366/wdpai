@@ -28,7 +28,7 @@ class Routing
     {
         self::registerRoutes();
 
-        $httpMethod = $_SERVER['REQUEST_METHOD'];
+        $httpMethod = self::resolveHttpMethod();
         $routes = self::$routes[$httpMethod] ?? [];
 
         foreach ($routes as $route) {
@@ -50,11 +50,16 @@ class Routing
         self::get('login',              'AuthController',      'loginPage');
         self::get('register',           'AuthController',      'registerPage');
         self::get('logout',             'AuthController',      'logout');
+        self::post('logout',            'AuthController',      'logout');
         self::get('dashboard',          'DashboardController', 'index');
         self::get('incidents',          'IncidentController',  'listPage');
         self::get('incidents/report',   'IncidentController',  'reportPage');
+        self::post('incidents/report',  'IncidentController',  'submitReport');
         self::get('incidents/{id}',     'IncidentController',  'previewPage');
+        self::post('incidents/{id}/update', 'IncidentController', 'updateFromPage');
+        self::post('incidents/{id}/delete', 'IncidentController', 'deleteFromPage');
         self::get('admin',              'AdminController',     'index');
+        self::post('admin/users/{id}',  'AdminController',     'updateUserFromPage');
 
         // Auth API
         self::post('api/auth/login',    'AuthController', 'login');
@@ -98,6 +103,24 @@ class Routing
         return $params;
     }
 
+    private static function resolveHttpMethod(): string
+    {
+        $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+
+        if ($method === 'POST') {
+            $override = $_POST['_method'] ?? $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] ?? null;
+
+            if (is_string($override)) {
+                $override = strtoupper(trim($override));
+                if (in_array($override, ['PATCH', 'DELETE'], true)) {
+                    return $override;
+                }
+            }
+        }
+
+        return $method;
+    }
+
     private static function dispatch(string $controllerName, string $method, array $params): void
     {
         $file = __DIR__ . "/src/controllers/{$controllerName}.php";
@@ -111,7 +134,19 @@ class Routing
         require_once __DIR__ . '/src/controllers/AppController.php';
         require_once $file;
 
+        if (!class_exists($controllerName)) {
+            http_response_code(500);
+            echo json_encode(['error' => "Controller class not found: {$controllerName}"]);
+            return;
+        }
+
         $controller = new $controllerName();
+        if (!method_exists($controller, $method)) {
+            http_response_code(500);
+            echo json_encode(['error' => "Method not found: {$controllerName}::{$method}"]);
+            return;
+        }
+
         $controller->$method($params);
     }
 }

@@ -48,20 +48,80 @@ class UserRepository extends Repository
     public function findAll(): array
     {
         return $this->fetchAll(
-            'SELECT u.id, u.email, u.full_name, u.created_at, r.name AS role_name
+            'SELECT
+                u.id,
+                u.email,
+                u.full_name,
+                u.created_at,
+                r.name AS role_name,
+                COUNT(i.id) AS incidents_count,
+                COUNT(i.id) FILTER (WHERE s.name IN (\'new\', \'in_progress\')) AS active_incidents_count
              FROM users u
              JOIN roles r ON r.id = u.role_id
+             LEFT JOIN incidents i ON i.reported_by = u.id
+             LEFT JOIN incident_statuses s ON s.id = i.status_id
+             GROUP BY u.id, r.name
              ORDER BY u.created_at DESC'
         );
     }
 
-    public function updateRole(int $userId, string $roleName): void
+    public function getRoles(): array
     {
-        $this->execute(
+        return $this->fetchAll(
+            'SELECT id, name
+             FROM roles
+             ORDER BY id'
+        );
+    }
+
+    public function roleExists(string $roleName): bool
+    {
+        return $this->fetchOne(
+            'SELECT 1
+             FROM roles
+             WHERE name = :role',
+            ['role' => $roleName]
+        ) !== null;
+    }
+
+    public function countByRole(): array
+    {
+        return $this->fetchAll(
+            'SELECT r.name AS role_name, COUNT(u.id) AS users_count
+             FROM roles r
+             LEFT JOIN users u ON u.role_id = r.id
+             GROUP BY r.id, r.name
+             ORDER BY r.id'
+        );
+    }
+
+    public function countAdmins(): int
+    {
+        $result = $this->fetchOne(
+            'SELECT COUNT(*) AS count
+             FROM users u
+             JOIN roles r ON r.id = u.role_id
+             WHERE r.name = :role',
+            ['role' => 'admin']
+        );
+
+        return (int) ($result['count'] ?? 0);
+    }
+
+    public function updateRole(int $userId, string $roleName): ?array
+    {
+        $updated = $this->fetchOne(
             'UPDATE users
              SET role_id = (SELECT id FROM roles WHERE name = :role)
-             WHERE id = :id',
+             WHERE id = :id
+             RETURNING id',
             ['role' => $roleName, 'id' => $userId]
         );
+
+        if ($updated === null) {
+            return null;
+        }
+
+        return $this->findById($userId);
     }
 }

@@ -8,59 +8,95 @@
   <link rel="stylesheet" href="/public/css/main.css">
 </head>
 <body class="auth-page">
-
-  <div class="auth-card">
-    <div class="auth-logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 1L3 5v6c0 5.25 3.75 10.15 9 11.35C17.25 21.15 21 16.25 21 11V5l-9-4z"/>
-        </svg>
+  <div class="auth-shell">
+    <section class="auth-showcase">
+      <div class="auth-showcase__badge">SafeCity / register</div>
+      <div class="auth-logo auth-logo--hero">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1L3 5v6c0 5.25 3.75 10.15 9 11.35C17.25 21.15 21 16.25 21 11V5l-9-4z"/>
+          </svg>
+        </div>
+        <h1>Załóż konto SafeCity</h1>
+        <p>Rejestracja zajmuje chwilę. Po utworzeniu konta możesz od razu zgłaszać incydenty i śledzić ich status.</p>
       </div>
-      <h1>SafeCity</h1>
-      <p>Utwórz konto</p>
-    </div>
-
-    <div class="alert alert--error hidden" id="general-error"></div>
-
-    <form id="register-form" novalidate>
-      <div class="form-group">
-        <label for="full_name">Imię i nazwisko</label>
-        <input type="text" id="full_name" name="full_name"
-               autocomplete="name" placeholder="Jan Kowalski" required>
-        <span class="field-error" id="full_name-error"></span>
+      <div class="auth-highlights">
+        <div class="auth-highlight">
+          <strong>Widoczny przepływ</strong>
+          <span>Najpierw konto, potem zgłoszenie, a na końcu śledzenie sprawy.</span>
+        </div>
+        <div class="auth-highlight">
+          <strong>Mniej tarcia</strong>
+          <span>Prosty formularz bez dodatkowych kroków i bez zbędnych bloków informacyjnych.</span>
+        </div>
       </div>
+    </section>
 
-      <div class="form-group">
-        <label for="email">Adres email</label>
-        <input type="email" id="email" name="email"
-               autocomplete="email" placeholder="jan@przyklad.pl" required>
-        <span class="field-error" id="email-error"></span>
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-card__top">
+          <div class="auth-logo">
+            <div class="logo-mark">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 1L3 5v6c0 5.25 3.75 10.15 9 11.35C17.25 21.15 21 16.25 21 11V5l-9-4z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="section-label">Nowe konto</p>
+              <h1>Rejestracja</h1>
+              <p>Utwórz konto mieszkańca, aby korzystać z panelu SafeCity.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert--error hidden" id="general-error"></div>
+
+        <form id="register-form" novalidate>
+          <div class="form-group">
+            <label for="full_name">Imię i nazwisko</label>
+            <input type="text" id="full_name" name="full_name"
+                   autocomplete="name" placeholder="Jan Kowalski" required>
+            <span class="field-error" id="full_name-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Adres email</label>
+            <input type="email" id="email" name="email"
+                   autocomplete="email" placeholder="jan@przyklad.pl" required>
+            <span class="field-error" id="email-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Hasło <span class="label-hint">(min. 8 znaków)</span></label>
+            <div class="input-with-action">
+              <input type="password" id="password" name="password"
+                     autocomplete="new-password" placeholder="••••••••" required>
+              <button type="button" class="input-action" data-toggle-password="password" aria-label="Pokaż hasło">Pokaż</button>
+            </div>
+            <span class="field-error" id="password-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="password_confirm">Powtórz hasło</label>
+            <div class="input-with-action">
+              <input type="password" id="password_confirm" name="password_confirm"
+                     autocomplete="new-password" placeholder="••••••••" required>
+              <button type="button" class="input-action" data-toggle-password="password_confirm" aria-label="Pokaż hasło">Pokaż</button>
+            </div>
+            <span class="field-error" id="password_confirm-error"></span>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--full" id="submit-btn">
+            Zarejestruj się
+          </button>
+        </form>
+
+        <p class="auth-footer">
+          Masz już konto? <a href="/login">Zaloguj się</a>
+        </p>
       </div>
-
-      <div class="form-group">
-        <label for="password">Hasło <span style="color:var(--text-muted)">(min. 8 znaków)</span></label>
-        <input type="password" id="password" name="password"
-               autocomplete="new-password" placeholder="••••••••" required>
-        <span class="field-error" id="password-error"></span>
-      </div>
-
-      <div class="form-group">
-        <label for="password_confirm">Powtórz hasło</label>
-        <input type="password" id="password_confirm" name="password_confirm"
-               autocomplete="new-password" placeholder="••••••••" required>
-        <span class="field-error" id="password_confirm-error"></span>
-      </div>
-
-      <button type="submit" class="btn btn--primary btn--full" id="submit-btn">
-        Zarejestruj się
-      </button>
-    </form>
-
-    <p class="auth-footer">
-      Masz już konto? <a href="/login">Zaloguj się</a>
-    </p>
+    </section>
   </div>
-
   <script src="/public/js/auth.js"></script>
 </body>
 </html>

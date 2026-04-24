@@ -52,6 +52,16 @@ CREATE TABLE incident_comments (
     created_at  TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE incident_status_history (
+    id             SERIAL PRIMARY KEY,
+    incident_id    INT NOT NULL REFERENCES incidents(id) ON DELETE CASCADE,
+    from_status_id INT REFERENCES incident_statuses(id) ON DELETE SET NULL,
+    to_status_id   INT NOT NULL REFERENCES incident_statuses(id) ON DELETE RESTRICT,
+    changed_by     INT REFERENCES users(id) ON DELETE SET NULL,
+    note           TEXT,
+    created_at     TIMESTAMP DEFAULT NOW()
+);
+
 -- ------------------------------------------------------------
 -- Widoki (VIEWs)
 -- ------------------------------------------------------------
@@ -105,6 +115,10 @@ BEFORE UPDATE ON incidents
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
 
+CREATE INDEX idx_incidents_reported_by ON incidents(reported_by);
+CREATE INDEX idx_incidents_status_id ON incidents(status_id);
+CREATE INDEX idx_incident_status_history_incident_id ON incident_status_history(incident_id, created_at DESC);
+
 -- Zwraca liczbę incydentów użytkownika w danym miesiącu
 CREATE OR REPLACE FUNCTION user_incident_count(uid INT, target_month DATE)
 RETURNS INT AS $$
@@ -151,3 +165,10 @@ INSERT INTO incidents (title, description, location, category_id, reported_by, s
 INSERT INTO incident_comments (incident_id, user_id, body) VALUES
     (1, 1, 'Jednostka straży pożarnej została zadysponowana.'),
     (2, 1, 'Służby na miejscu, ruch przywrócony.');
+
+INSERT INTO incident_status_history (incident_id, from_status_id, to_status_id, changed_by, note) VALUES
+    (1, NULL, 1, 2, 'Zgłoszenie zostało utworzone przez obywatela.'),
+    (2, NULL, 1, 2, 'Zgłoszenie zostało utworzone przez obywatela.'),
+    (2, 1, 2, 1, 'Administrator przekazał sprawę do obsługi.'),
+    (3, NULL, 1, 2, 'Zgłoszenie zostało utworzone przez obywatela.'),
+    (3, 1, 3, 1, 'Awaria została oznaczona jako rozwiązana.');

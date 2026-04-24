@@ -15,7 +15,7 @@ class AuthController extends AppController
 
     public function loginPage(array $params): void
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->startSession();
         if (!empty($_SESSION['user_id'])) {
             $this->redirect('/dashboard');
         }
@@ -24,7 +24,7 @@ class AuthController extends AppController
 
     public function registerPage(array $params): void
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->startSession();
         if (!empty($_SESSION['user_id'])) {
             $this->redirect('/dashboard');
         }
@@ -33,7 +33,7 @@ class AuthController extends AppController
 
     public function login(array $params): void
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->startSession();
 
         if (!$this->validateCsrf()) {
             $this->jsonResponse(['errors' => ['general' => 'Nieprawidłowy token CSRF.']], 403);
@@ -70,20 +70,36 @@ class AuthController extends AppController
 
     public function logout(array $params): void
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->startSession();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET' && !$this->validateCsrf()) {
+            if ($this->isApiRequest()) {
+                $this->jsonResponse(['errors' => ['general' => 'Nieprawidłowy token CSRF.']], 403);
+                return;
+            }
+
+            $this->flash('error', 'Nieprawidłowy token CSRF.');
+            $this->redirect('/dashboard');
+        }
+
         $_SESSION = [];
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], (bool) $params['secure'], (bool) $params['httponly']);
+        }
         session_destroy();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $this->redirect('/login');
-        } else {
+        if ($this->isApiRequest()) {
             $this->jsonResponse(['redirect' => '/login']);
+            return;
         }
+
+        $this->redirect('/login');
     }
 
     public function register(array $params): void
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->startSession();
 
         if (!$this->validateCsrf()) {
             $this->jsonResponse(['errors' => ['general' => 'Nieprawidłowy token CSRF.']], 403);
