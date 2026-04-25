@@ -15,7 +15,7 @@ class AdminController extends AppController
     public function index(array $params): void
     {
         $this->requireRole('admin');
-        $this->render('admin/index.html');
+        $this->renderSpaPage('Administracja — SafeCity', 'admin');
     }
 
     public function users(array $params): void
@@ -49,32 +49,6 @@ class AdminController extends AppController
         unset($result['status']);
 
         $this->jsonResponse($result, $status);
-    }
-
-    public function updateUserFromPage(array $params): void
-    {
-        $this->requireRole('admin');
-
-        if (!$this->validateCsrf()) {
-            $this->flash('error', 'Nieprawidłowy token CSRF.');
-            $this->redirect('/admin');
-        }
-
-        $userId = $this->extractUserId($params);
-        if ($userId === null) {
-            $this->flash('error', 'Nieprawidłowy identyfikator użytkownika.');
-            $this->redirect('/admin');
-        }
-
-        $result = $this->applyRoleUpdate($userId, $this->getBody());
-        if (isset($result['errors'])) {
-            $firstError = reset($result['errors']);
-            $this->flash('error', is_string($firstError) ? $firstError : 'Nie udało się zaktualizować roli.');
-            $this->redirect('/admin');
-        }
-
-        $this->flash('success', 'Rola użytkownika została zaktualizowana.');
-        $this->redirect('/admin');
     }
 
     private function applyRoleUpdate(int $userId, array $body): array

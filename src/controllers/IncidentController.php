@@ -19,13 +19,13 @@ class IncidentController extends AppController
     public function listPage(array $params): void
     {
         $this->requireLogin();
-        $this->render('incidents/index.html');
+        $this->renderSpaPage('Incydenty — SafeCity', 'incidents');
     }
 
     public function reportPage(array $params): void
     {
         $this->requireLogin();
-        $this->render('incidents/report.html');
+        $this->renderSpaPage('Nowe zgłoszenie — SafeCity', 'report');
     }
 
     public function previewPage(array $params): void
@@ -46,79 +46,7 @@ class IncidentController extends AppController
             return;
         }
 
-        $this->render('incidents/detail.html');
-    }
-
-    public function submitReport(array $params): void
-    {
-        $this->requireLogin();
-
-        if (!$this->validateCsrf()) {
-            $this->flash('error', 'Nieprawidłowy token CSRF.');
-            $this->redirect('/incidents/report');
-        }
-
-        [$status, $response] = $this->createIncidentFromPayload($this->getBody());
-
-        if ($status >= 400) {
-            $this->flash('error', $this->firstErrorMessage($response, 'Nie udało się dodać zgłoszenia.'));
-            $this->redirect('/incidents/report');
-        }
-
-        $this->flash('success', 'Zgłoszenie zostało zapisane.');
-        $this->redirect('/incidents/' . $response['incident']['id']);
-    }
-
-    public function updateFromPage(array $params): void
-    {
-        $this->requireLogin();
-
-        if (!$this->validateCsrf()) {
-            $this->flash('error', 'Nieprawidłowy token CSRF.');
-            $this->redirect('/incidents');
-        }
-
-        $incidentId = $this->extractIncidentId($params);
-        if ($incidentId === null) {
-            $this->flash('error', 'Nieprawidłowy identyfikator zgłoszenia.');
-            $this->redirect('/incidents');
-        }
-
-        [$status, $response] = $this->updateIncidentFromPayload($incidentId, $this->getBody());
-
-        if ($status >= 400) {
-            $this->flash('error', $this->firstErrorMessage($response, 'Nie udało się zaktualizować zgłoszenia.'));
-            $this->redirect('/incidents/' . $incidentId);
-        }
-
-        $this->flash('success', 'Zgłoszenie zostało zaktualizowane.');
-        $this->redirect('/incidents/' . $incidentId);
-    }
-
-    public function deleteFromPage(array $params): void
-    {
-        $this->requireLogin();
-
-        if (!$this->validateCsrf()) {
-            $this->flash('error', 'Nieprawidłowy token CSRF.');
-            $this->redirect('/incidents');
-        }
-
-        $incidentId = $this->extractIncidentId($params);
-        if ($incidentId === null) {
-            $this->flash('error', 'Nieprawidłowy identyfikator zgłoszenia.');
-            $this->redirect('/incidents');
-        }
-
-        [$status, $response] = $this->deleteIncidentById($incidentId);
-
-        if ($status >= 400) {
-            $this->flash('error', $response['error'] ?? 'Nie udało się usunąć zgłoszenia.');
-            $this->redirect('/incidents/' . $incidentId);
-        }
-
-        $this->flash('success', 'Zgłoszenie zostało usunięte.');
-        $this->redirect('/incidents');
+        $this->renderSpaPage('Szczegóły zgłoszenia — SafeCity', 'incident-detail');
     }
 
     public function list(array $params): void
@@ -433,21 +361,5 @@ class IncidentController extends AppController
     {
         $id = filter_var($params['id'] ?? null, FILTER_VALIDATE_INT);
         return $id === false ? null : (int) $id;
-    }
-
-    private function firstErrorMessage(array $response, string $fallback): string
-    {
-        if (!empty($response['error']) && is_string($response['error'])) {
-            return $response['error'];
-        }
-
-        if (!empty($response['errors']) && is_array($response['errors'])) {
-            $first = reset($response['errors']);
-            if (is_string($first)) {
-                return $first;
-            }
-        }
-
-        return $fallback;
     }
 }

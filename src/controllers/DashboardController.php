@@ -18,7 +18,7 @@ class DashboardController extends AppController
     public function index(array $params): void
     {
         $this->requireLogin();
-        $this->render('dashboard.html');
+        $this->renderSpaPage('Panel — SafeCity', 'dashboard');
     }
 
     public function stats(array $params): void

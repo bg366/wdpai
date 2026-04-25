@@ -13,16 +13,6 @@ class CategoryRepository extends Repository
         );
     }
 
-    public function findById(int $id): ?array
-    {
-        return $this->fetchOne(
-            'SELECT id, name, icon, color
-             FROM incident_categories
-             WHERE id = :id',
-            ['id' => $id]
-        );
-    }
-
     public function exists(int $id): bool
     {
         return $this->fetchOne(

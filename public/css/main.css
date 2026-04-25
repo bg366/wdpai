@@ -2407,7 +2407,7 @@ body.app-page {
 body.app-page .app-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 92px minmax(0, 1fr);
+  grid-template-columns: 196px minmax(0, 1fr);
   background: var(--figma-navy);
 }
 
@@ -2418,9 +2418,10 @@ body.app-page .app-sidebar {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 18px 14px 14px;
+  padding: 18px 16px 14px;
   background: linear-gradient(180deg, #12203b 0%, #131d31 100%);
   border-right: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
 }
 
 body.app-page .sidebar-brand {
@@ -2989,50 +2990,6 @@ body.app-page .mini-toolbar__item strong {
   color: var(--figma-text);
 }
 
-body.app-page .map-preview {
-  position: relative;
-  min-height: 180px;
-  border-radius: 22px;
-  overflow: hidden;
-  background: linear-gradient(180deg, #f3e5d8, #d4c7bc);
-}
-
-body.app-page .map-preview--dark {
-  margin-top: 16px;
-}
-
-body.app-page .map-preview__grid {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px 48px),
-    linear-gradient(rgba(255, 255, 255, 0.28) 0 1px, transparent 1px 48px),
-    radial-gradient(circle at 35% 42%, rgba(255, 255, 255, 0.48) 0 2px, transparent 3px);
-  opacity: 0.55;
-}
-
-body.app-page .map-preview__overlay {
-  position: absolute;
-  inset: auto 16px 16px 16px;
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: rgba(21, 29, 46, 0.9);
-}
-
-body.app-page .map-preview__overlay span {
-  display: block;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-body.app-page .map-preview__overlay strong {
-  display: block;
-  margin-top: 4px;
-  color: #fff;
-}
-
 body.app-page .distribution-list,
 body.app-page .metric-list,
 body.app-page .stack-form,
@@ -3221,32 +3178,6 @@ body.app-page .report-card__link {
   text-decoration: none;
 }
 
-body.app-page .incident-media {
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-body.app-page .incident-media--card {
-  min-height: 168px;
-  border-radius: 22px 22px 0 0;
-}
-
-body.app-page .incident-media--hero {
-  min-height: 280px;
-  border-radius: 22px;
-}
-
-body.app-page .incident-media--thumb {
-  min-height: 86px;
-  border-radius: 14px;
-}
-
-body.app-page .incident-media--preview {
-  min-height: 180px;
-  border-radius: 18px;
-}
-
 body.app-page .report-card__body {
   display: grid;
   gap: 12px;
@@ -3301,9 +3232,7 @@ body.app-page .user-card strong {
 
 body.app-page .report-card__body p,
 body.app-page .similar-card span,
-body.app-page .user-card span,
-body.app-page .preview-copy span,
-body.app-page .preview-copy p {
+body.app-page .user-card span {
   margin: 0;
   color: var(--figma-muted);
 }
@@ -3321,45 +3250,6 @@ body.app-page .detail-layout {
   gap: 18px;
 }
 
-body.app-page .step-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 22px;
-}
-
-body.app-page .step-tab {
-  min-height: 64px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 18px;
-  border-radius: 20px;
-  background: #f8f9fd;
-  border: 1px solid #e3e8f0;
-}
-
-body.app-page .step-tab span {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: #f1dccd;
-  color: var(--figma-orange);
-  font-weight: 900;
-}
-
-body.app-page .step-tab strong {
-  color: var(--figma-text);
-  font-size: 0.98rem;
-}
-
-body.app-page .step-tab.is-active {
-  background: var(--figma-cream);
-  border-color: #efc8b4;
-}
-
 body.app-page .report-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3371,84 +3261,12 @@ body.app-page .form-block h2 {
   letter-spacing: -0.03em;
 }
 
-body.app-page .upload-placeholder {
-  min-height: 132px;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-  text-align: center;
-  border-radius: 18px;
-  border: 1px dashed #d7e0ec;
-  background: #f8fafd;
-}
-
-body.app-page .toggle-card {
-  min-height: 82px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
-  border-radius: 18px;
-  border: 1px solid #dfe6f0;
-  background: #f8fafd;
-}
-
-body.app-page .toggle-card input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-body.app-page .toggle-card__switch {
-  width: 52px;
-  height: 30px;
-  border-radius: 999px;
-  position: relative;
-  flex: 0 0 auto;
-  background: #d8e1ed;
-}
-
-body.app-page .toggle-card__switch::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 4px 10px rgba(33, 46, 72, 0.14);
-}
-
-body.app-page .preview-copy {
-  display: grid;
-  gap: 4px;
-  margin-top: 14px;
-}
-
-body.app-page .preview-copy strong {
-  color: #fff;
-  font-size: 1.1rem;
-}
-
 body.app-page .guideline-list {
   margin: 0;
   padding-left: 18px;
   color: var(--figma-muted);
   display: grid;
   gap: 10px;
-}
-
-body.app-page .sla-meter {
-  display: grid;
-  gap: 8px;
-}
-
-body.app-page .sla-meter strong {
-  color: var(--figma-orange);
-  font-size: 2.2rem;
-  line-height: 0.9;
-  letter-spacing: -0.04em;
 }
 
 body.app-page .detail-story__header {
@@ -3554,35 +3372,6 @@ body.app-page .timeline__note {
   white-space: pre-wrap;
 }
 
-body.app-page .detail-inputbar {
-  margin-top: 16px;
-  min-height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0 16px;
-  border-radius: 999px;
-  background: #fff;
-  border: 1px solid var(--figma-border);
-}
-
-body.app-page .detail-inputbar span {
-  color: #99a3b2;
-}
-
-body.app-page .detail-inputbar__action {
-  min-width: 56px;
-  min-height: 34px;
-  border-radius: 999px;
-  border: 0;
-  background: #1e2940;
-  color: #fff;
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
 body.app-page .summary-list {
   display: grid;
   gap: 10px;
@@ -3620,62 +3409,6 @@ body.app-page .similar-card__body {
   display: grid;
   align-content: center;
   gap: 6px;
-}
-
-body.app-page .admin-board {
-  display: grid;
-  gap: 18px;
-}
-
-body.app-page .admin-board__hero {
-  min-height: 220px;
-  padding: 22px;
-  border-radius: 22px;
-  display: grid;
-  align-content: end;
-  background: linear-gradient(180deg, #efe1d4, #d8cbc2);
-}
-
-body.app-page .admin-board__label {
-  color: var(--figma-orange);
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-body.app-page .admin-board__hero strong {
-  margin-top: 6px;
-  color: var(--figma-text);
-  font-size: 1.2rem;
-}
-
-body.app-page .admin-board__items {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-body.app-page .admin-board__item {
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: #f8fafd;
-  border: 1px solid #e4eaf3;
-}
-
-body.app-page .admin-board__item span {
-  display: block;
-  color: var(--figma-muted);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-body.app-page .admin-board__item strong {
-  display: block;
-  margin-top: 6px;
-  color: var(--figma-text);
 }
 
 body.app-page .user-card {
@@ -3788,8 +3521,6 @@ body.app-page .mobile-nav {
   body.app-page .metrics-grid--four,
   body.app-page .metrics-grid--compact,
   body.app-page .report-form-grid,
-  body.app-page .admin-board__items,
-  body.app-page .step-tabs,
   body.app-page .reports-toolbar {
     grid-template-columns: 1fr;
   }
@@ -4118,9 +3849,9 @@ body.app-page .sidebar-nav {
 
 body.app-page .sidebar-nav__item {
   position: relative;
-  justify-items: center;
+  justify-items: stretch;
   gap: 8px;
-  padding: 10px 6px;
+  padding: 14px 14px 14px 18px;
   border: 1px solid transparent;
 }
 
@@ -4153,8 +3884,10 @@ body.app-page .sidebar-nav__icon {
 }
 
 body.app-page .sidebar-nav__label {
-  text-align: center;
+  text-align: left;
   line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 body.app-page .sidebar-alert,
@@ -4162,6 +3895,10 @@ body.app-page .sidebar-link,
 body.app-page .sidebar-link--button {
   min-height: 36px;
   border-radius: 12px;
+  padding: 0 12px;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 body.app-page .app-main {
@@ -4258,14 +3995,9 @@ body.app-page .field textarea {
 body.app-page .mini-toolbar__item,
 body.app-page .timeline__item,
 body.app-page .similar-card,
-body.app-page .admin-board__item,
 body.app-page .user-card,
 body.app-page .detail-fact {
   border-radius: 16px;
-}
-
-body.app-page .map-preview {
-  border-radius: 20px;
 }
 
 body.app-page .report-card {
@@ -4277,10 +4009,6 @@ body.app-page .report-card:hover {
   transform: translateY(-2px);
   border-color: #d2dce9;
   box-shadow: 0 24px 40px rgba(33, 46, 72, 0.1);
-}
-
-body.app-page .incident-media--card {
-  min-height: 156px;
 }
 
 body.app-page .report-card__body {
@@ -4406,5 +4134,361 @@ body.auth-page .btn--primary {
   body.auth-page .auth-showcase::before {
     width: min(70vw, 360px);
     top: 128px;
+  }
+}
+
+body.app-page .app-main,
+body.app-page .app-shell--incidents .app-main,
+body.app-page .app-shell--report .app-main,
+body.app-page .app-shell--detail .app-main,
+body.app-page .app-shell--admin .app-main {
+  width: 100%;
+  max-width: none;
+  padding: 24px clamp(22px, 2.8vw, 40px) 104px;
+}
+
+body.app-page .page-shell {
+  gap: 20px;
+}
+
+body.app-page .surface-card--padded {
+  padding: clamp(20px, 1.8vw, 26px);
+}
+
+body.app-page .dashboard-layout {
+  grid-template-columns: minmax(0, 1.65fr) minmax(360px, 0.75fr);
+  gap: 20px;
+}
+
+body.app-page .dashboard-layout--secondary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+body.app-page .report-layout,
+body.app-page .detail-layout {
+  grid-template-columns: minmax(0, 1.4fr) minmax(340px, 0.72fr);
+  gap: 20px;
+}
+
+body.app-page .report-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 20px;
+}
+
+body.app-page .reports-toolbar {
+  grid-template-columns: minmax(220px, 1.8fr) repeat(3, minmax(160px, 1fr)) auto;
+}
+
+body.app-page .status-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+}
+
+body.app-page .status-card {
+  width: min(560px, 100%);
+  text-align: center;
+}
+
+body.app-page .status-card h1 {
+  margin-bottom: 12px;
+}
+
+body.app-page .status-card__copy {
+  margin: 0 0 20px;
+  color: var(--figma-muted);
+}
+
+@media (min-width: 1500px) {
+  body.app-page .app-main,
+  body.app-page .app-shell--incidents .app-main,
+  body.app-page .app-shell--report .app-main,
+  body.app-page .app-shell--detail .app-main,
+  body.app-page .app-shell--admin .app-main {
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+
+  body.app-page .report-card-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  body.app-page .dashboard-layout {
+    grid-template-columns: minmax(0, 1.8fr) minmax(380px, 0.72fr);
+  }
+}
+
+@media (max-width: 1080px) {
+  body.app-page .dashboard-layout,
+  body.app-page .dashboard-layout--secondary,
+  body.app-page .report-layout,
+  body.app-page .detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  body.app-page .app-main,
+  body.app-page .app-shell--incidents .app-main,
+  body.app-page .app-shell--report .app-main,
+  body.app-page .app-shell--detail .app-main,
+  body.app-page .app-shell--admin .app-main {
+    padding: 18px 16px 96px;
+  }
+
+  body.app-page .reports-toolbar,
+  body.app-page .report-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+body.app-page .app-topbar {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+body.app-page .topbar-userbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: end;
+  min-width: 0;
+}
+
+body.app-page .topbar-usertext {
+  display: grid;
+  gap: 2px;
+  text-align: right;
+}
+
+body.app-page .topbar-usertext strong {
+  color: #fff;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+body.app-page .topbar-usertext span {
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+body.app-page .stack-column--tight {
+  gap: 10px;
+}
+
+body.app-page .support-copy {
+  margin: 0;
+  color: var(--figma-muted);
+  line-height: 1.6;
+}
+
+body.app-page .reports-toolbar {
+  grid-template-columns: minmax(260px, 2fr) repeat(2, minmax(180px, 1fr)) auto;
+}
+
+body.app-page .report-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+body.app-page .report-card__link {
+  height: 100%;
+}
+
+body.app-page .report-card__body {
+  gap: 12px;
+  padding: 18px;
+}
+
+body.app-page .report-card__body p {
+  line-height: 1.58;
+}
+
+body.app-page .report-card__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #edf1f7;
+}
+
+body.app-page .report-card__fact {
+  display: grid;
+  gap: 4px;
+}
+
+body.app-page .report-card__fact span {
+  color: #7b8797;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.app-page .report-card__fact strong {
+  color: var(--figma-text);
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+body.app-page .form-block {
+  display: grid;
+  gap: 8px;
+}
+
+body.app-page .info-list {
+  display: grid;
+  gap: 10px;
+}
+
+body.app-page .info-list__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f8fafd;
+  border: 1px solid #e4eaf3;
+}
+
+body.app-page .info-list__row span {
+  color: var(--figma-text);
+  font-weight: 600;
+}
+
+body.app-page .info-list__row strong {
+  color: var(--figma-muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.app-page .detail-lead {
+  margin: 10px 0 0;
+  color: var(--figma-muted);
+  line-height: 1.6;
+}
+
+body.app-page .detail-facts {
+  flex: 0 1 360px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.app-page .summary-list__row {
+  border: 1px solid #e4eaf3;
+  background: #f8fafd;
+}
+
+body.app-page .summary-list__row span {
+  display: block;
+  margin-bottom: 4px;
+  color: #6e7d92;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.app-page .summary-list__row strong {
+  color: var(--figma-text);
+}
+
+body.app-page .similar-card {
+  grid-template-columns: 1fr;
+  padding: 14px;
+}
+
+body.app-page .similar-card__body {
+  gap: 4px;
+}
+
+body.app-page .similar-card__body strong {
+  font-size: 1rem;
+}
+
+body.app-page .detail-rail {
+  display: grid;
+  gap: 18px;
+  align-self: start;
+}
+
+body.app-page .admin-notes {
+  display: grid;
+  gap: 12px;
+}
+
+body.app-page .admin-note {
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #f8fafd;
+  border: 1px solid #e4eaf3;
+}
+
+body.app-page .admin-note strong {
+  display: block;
+  margin: 0 0 6px;
+  color: var(--figma-text);
+}
+
+body.app-page .admin-note p {
+  margin: 0;
+  color: var(--figma-muted);
+  line-height: 1.58;
+}
+
+body.app-page .user-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+body.app-page .user-card__main {
+  min-width: 0;
+}
+
+body.app-page .user-card__main > div:last-child {
+  min-width: 0;
+}
+
+body.app-page .user-card__main strong,
+body.app-page .user-card__main span {
+  overflow-wrap: anywhere;
+}
+
+body.app-page .user-card__stats {
+  grid-column: 1 / -1;
+  align-self: center;
+  padding-top: 10px;
+  border-top: 1px solid #e4eaf3;
+}
+
+body.app-page .user-card__form {
+  justify-self: end;
+  align-items: end;
+}
+
+@media (min-width: 1081px) {
+  body.app-page .detail-rail {
+    position: sticky;
+    top: 24px;
+  }
+}
+
+@media (max-width: 860px) {
+  body.app-page .app-topbar {
+    grid-template-columns: 1fr auto;
+  }
+
+  body.app-page .topbar-usertext span {
+    display: none;
+  }
+
+  body.app-page .report-card__facts,
+  body.app-page .detail-facts,
+  body.app-page .user-card {
+    grid-template-columns: 1fr;
   }
 }

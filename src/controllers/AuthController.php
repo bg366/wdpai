@@ -78,8 +78,8 @@ class AuthController extends AppController
                 return;
             }
 
-            $this->flash('error', 'Nieprawidłowy token CSRF.');
-            $this->redirect('/dashboard');
+            $this->renderStatusPage(403, 'Nieprawidłowy token CSRF', 'Nie udało się wylogować z powodu błędnego tokenu bezpieczeństwa.');
+            return;
         }
 
         $_SESSION = [];

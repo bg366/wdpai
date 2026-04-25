@@ -54,12 +54,9 @@ class Routing
         self::get('dashboard',          'DashboardController', 'index');
         self::get('incidents',          'IncidentController',  'listPage');
         self::get('incidents/report',   'IncidentController',  'reportPage');
-        self::post('incidents/report',  'IncidentController',  'submitReport');
         self::get('incidents/{id}',     'IncidentController',  'previewPage');
-        self::post('incidents/{id}/update', 'IncidentController', 'updateFromPage');
-        self::post('incidents/{id}/delete', 'IncidentController', 'deleteFromPage');
         self::get('admin',              'AdminController',     'index');
-        self::post('admin/users/{id}',  'AdminController',     'updateUserFromPage');
+        self::get('admin/dashboard',    'AdminController',     'index');
 
         // Auth API
         self::post('api/auth/login',    'AuthController', 'login');

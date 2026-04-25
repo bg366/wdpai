@@ -24,14 +24,6 @@
     admin: 'Administrator',
   };
 
-  const incidentImages = [
-    '/public/assets/incidents/incident-1.svg',
-    '/public/assets/incidents/incident-2.svg',
-    '/public/assets/incidents/incident-3.svg',
-    '/public/assets/incidents/incident-4.svg',
-    '/public/assets/incidents/incident-5.svg',
-  ];
-
   init().catch((error) => {
     renderPage(pageTitle(page), renderErrorPanel(error), { section: sectionForPage(page) });
   });
@@ -43,7 +35,7 @@
     if (page === 'incident-detail') return renderIncidentDetail();
     if (page === 'admin') return renderAdminCenter();
 
-    renderPage(pageTitle(page), renderEmptyState('Ta trasa nie jest jeszcze obsłużona.', 'Wróć do dashboardu albo listy zgłoszeń.'));
+    renderPage(pageTitle(page), renderEmptyState('Ta trasa nie jest jeszcze obsłużona.', 'Wróć do panelu albo listy zgłoszeń.'));
   }
 
   async function renderDashboard() {
@@ -60,31 +52,31 @@
       <section class="page-shell page-shell--dashboard">
         <div class="page-head page-head--dashboard">
           <div>
-            <p class="page-eyebrow">Command Center</p>
-            <h1>Command Center</h1>
-            <p class="page-subtitle">Real-time surveillance and incident coordination.</p>
+            <p class="page-eyebrow">Panel</p>
+            <h1>Panel</h1>
+            <p class="page-subtitle">Aktualna liczba zgłoszeń, ostatnie zmiany i przegląd ról w systemie.</p>
           </div>
           <div class="page-actions">
-            <a class="ui-btn ui-btn--secondary" href="/incidents">Export Data</a>
-            <a class="ui-btn ui-btn--primary" href="/incidents/report">Generate Report</a>
+            <a class="ui-btn ui-btn--secondary" href="/incidents">Zobacz zgłoszenia</a>
+            <a class="ui-btn ui-btn--primary" href="/incidents/report">Nowe zgłoszenie</a>
           </div>
         </div>
 
         <section class="metrics-grid metrics-grid--four">
-          ${metricCard('Total Reports', stats.total ?? 0, 'active incidents in queue', 'metric-card--blue')}
-          ${metricCard('Open Incidents', stats.new_count ?? 0, 'awaiting action', 'metric-card--orange')}
-          ${metricCard('In Progress', stats.in_progress_count ?? 0, 'assigned to operators', 'metric-card--sand')}
-          ${metricCard('Resolved MTD', stats.resolved_count ?? 0, 'closed this month', 'metric-card--green')}
+          ${metricCard('Wszystkie zgłoszenia', stats.total ?? 0, 'rekordów w systemie', 'metric-card--blue')}
+          ${metricCard('Nowe', stats.new_count ?? 0, 'czekają na weryfikację', 'metric-card--orange')}
+          ${metricCard('W toku', stats.in_progress_count ?? 0, 'są właśnie obsługiwane', 'metric-card--sand')}
+          ${metricCard('Rozwiązane', stats.resolved_count ?? 0, 'zamkniętych zgłoszeń', 'metric-card--green')}
         </section>
 
         <div class="dashboard-layout">
           <section class="surface-card surface-card--padded">
             <div class="card-head">
               <div>
-                <p class="card-eyebrow">Recent Incidents</p>
-                <h2>Operational Queue</h2>
+                <p class="card-eyebrow">Ostatnie zgłoszenia</p>
+                <h2>Bieżąca kolejka</h2>
               </div>
-              <span class="card-meta">Displaying ${escapeHtml(recentIncidents.length)} of 50</span>
+              <span class="card-meta">Pokazano ${escapeHtml(recentIncidents.length)} najnowszych pozycji</span>
             </div>
             ${recentIncidents.length ? renderIncidentTable(recentIncidents) : renderEmptyState('Brak zgłoszeń', 'Nie ma jeszcze pozycji w kolejce.')}
           </section>
@@ -93,42 +85,43 @@
             <section class="surface-card surface-card--padded">
               <div class="card-head card-head--compact">
                 <div>
-                  <p class="card-eyebrow">Refine Queue</p>
-                  <h2>Incident Filters</h2>
+                  <p class="card-eyebrow">Podsumowanie</p>
+                  <h2>Przegląd kolejki</h2>
                 </div>
-                <a class="card-link" href="/incidents">Clear All</a>
+                <a class="card-link" href="/incidents">Otwórz zgłoszenia</a>
               </div>
+              <p class="support-copy">Pełny widok zgłoszeń pozwala wyszukiwać, filtrować i przeglądać pojedyncze sprawy.</p>
               <div class="pill-row pill-row--wrap">
                 ${['new', 'in_progress', 'resolved', 'rejected'].map((key) => statusPill(key)).join('')}
               </div>
               <div class="mini-toolbar">
                 <div class="mini-toolbar__item">
-                  <span>Category</span>
-                  <strong>${escapeHtml(categoryBreakdown[0]?.category_name || 'All Categories')}</strong>
+                  <span>Najczęstsza kategoria</span>
+                  <strong>${escapeHtml(categoryBreakdown[0]?.category_name || 'Brak danych')}</strong>
                 </div>
                 <div class="mini-toolbar__item">
-                  <span>Window</span>
-                  <strong>Last 30 Days</strong>
+                  <span>Ostatnie zmiany</span>
+                  <strong>${escapeHtml(recentActivity.length)}</strong>
+                </div>
+                <div class="mini-toolbar__item">
+                  <span>Aktywne role</span>
+                  <strong>${escapeHtml(usersByRole.length)}</strong>
                 </div>
               </div>
-              <div class="map-preview map-preview--dark">
-                <div class="map-preview__grid"></div>
-                <div class="map-preview__overlay">
-                  <span>District 1</span>
-                  <strong>District 2</strong>
-                </div>
-              </div>
+              <a class="ui-btn ui-btn--secondary ui-btn--full" href="/incidents">Przejrzyj kolejkę</a>
             </section>
 
-            <section class="surface-card surface-card--padded surface-card--dark">
+            <section class="surface-card surface-card--padded">
               <div class="card-head card-head--compact">
                 <div>
-                  <p class="card-eyebrow">Emergency</p>
-                  <h2>Alert Access</h2>
+                  <p class="card-eyebrow">Skróty</p>
+                  <h2>Następne działania</h2>
                 </div>
               </div>
-              <p class="dark-copy">Quick entry point for field escalation and immediate city dispatch.</p>
-              <a class="ui-btn ui-btn--primary ui-btn--full" href="/incidents/report">Emergency Alert</a>
+              <div class="stack-column stack-column--tight">
+                <a class="ui-btn ui-btn--primary ui-btn--full" href="/incidents/report">Dodaj zgłoszenie</a>
+                ${user.role === 'admin' ? '<a class="ui-btn ui-btn--secondary ui-btn--full" href="/admin">Zarządzaj dostępem</a>' : ''}
+              </div>
             </section>
           </aside>
         </div>
@@ -137,8 +130,8 @@
           <section class="surface-card surface-card--padded">
             <div class="card-head">
               <div>
-                <p class="card-eyebrow">Incident Distribution</p>
-                <h2>Category Breakdown</h2>
+                <p class="card-eyebrow">Przekrój</p>
+                <h2>Zgłoszenia według kategorii</h2>
               </div>
             </div>
             ${categoryBreakdown.length ? renderCategoryDistribution(categoryBreakdown) : renderEmptyState('Brak danych', 'Nie ma jeszcze rozkładu kategorii.')}
@@ -147,10 +140,10 @@
           <section class="surface-card surface-card--padded">
             <div class="card-head">
               <div>
-                <p class="card-eyebrow">30-Day Activity Trend</p>
-                <h2>Operational Tempo</h2>
+                <p class="card-eyebrow">Trend</p>
+                <h2>Aktywność</h2>
               </div>
-              <span class="card-meta">Today</span>
+              <span class="card-meta">Dzisiaj</span>
             </div>
             ${renderTrendChart(stats, recentIncidents)}
           </section>
@@ -161,8 +154,8 @@
             <section class="surface-card surface-card--padded">
               <div class="card-head">
                 <div>
-                  <p class="card-eyebrow">Recent Activity</p>
-                  <h2>Status Updates</h2>
+                  <p class="card-eyebrow">Ostatnia aktywność</p>
+                  <h2>Zmiany statusów</h2>
                 </div>
               </div>
               ${recentActivity.length ? renderTimeline(recentActivity, true) : renderEmptyState('Brak aktywności', 'Historia pojawi się po pierwszych zmianach.')}
@@ -171,8 +164,8 @@
             <section class="surface-card surface-card--padded">
               <div class="card-head">
                 <div>
-                  <p class="card-eyebrow">Users</p>
-                  <h2>Role Coverage</h2>
+                  <p class="card-eyebrow">Użytkownicy</p>
+                  <h2>Rozkład ról</h2>
                 </div>
               </div>
               ${usersByRole.length ? renderMetricList(usersByRole, 'role_name', 'users_count', true) : renderEmptyState('Brak danych', 'Nie udało się pobrać statystyk ról.')}
@@ -205,13 +198,13 @@
       <section class="page-shell page-shell--reports">
         <div class="page-head page-head--reports">
           <div>
-            <p class="page-eyebrow">Incident Reports</p>
-            <h1>Incident Reports</h1>
-            <p class="page-subtitle">Reviewing ${escapeHtml(incidents.length)} active community logs across the district.</p>
+            <p class="page-eyebrow">Zgłoszenia</p>
+            <h1>Zgłoszenia</h1>
+            <p class="page-subtitle">Wyświetlono ${escapeHtml(incidents.length)} zgłoszeń pasujących do bieżących filtrów.</p>
           </div>
           <div class="page-actions page-actions--meta">
-            <span class="page-meta">Updated ${escapeHtml(relativeAge(latestUpdatedAt))}</span>
-            <a class="ui-btn ui-btn--primary" href="/incidents/report">+ New Report</a>
+            <span class="page-meta">Zaktualizowano ${escapeHtml(relativeAge(latestUpdatedAt))}</span>
+            <a class="ui-btn ui-btn--primary" href="/incidents/report">Nowe zgłoszenie</a>
           </div>
         </div>
 
@@ -220,7 +213,7 @@
           <input type="hidden" name="category_id" value="${escapeAttr(state.filters.category_id)}">
 
           <div class="pill-row pill-row--wrap">
-            <button class="filter-pill${!state.filters.status ? ' is-active' : ''}" type="button" data-status="">All</button>
+            <button class="filter-pill${!state.filters.status ? ' is-active' : ''}" type="button" data-status="">Wszystkie</button>
             ${statuses.map((status) => `
               <button class="filter-pill${state.filters.status === status.name ? ' is-active' : ''}" type="button" data-status="${escapeAttr(status.name)}">
                 ${escapeHtml(statusLabels[status.name] || titleCase(status.name))}
@@ -229,7 +222,7 @@
           </div>
 
           <div class="pill-row pill-row--wrap">
-            <button class="filter-pill filter-pill--soft${!state.filters.category_id ? ' is-active' : ''}" type="button" data-category="">All Categories</button>
+            <button class="filter-pill filter-pill--soft${!state.filters.category_id ? ' is-active' : ''}" type="button" data-category="">Wszystkie kategorie</button>
             ${categories.slice(0, 6).map((category) => `
               <button class="filter-pill filter-pill--soft${state.filters.category_id === String(category.id) ? ' is-active' : ''}" type="button" data-category="${escapeAttr(category.id)}">
                 ${escapeHtml(category.name)}
@@ -239,14 +232,14 @@
 
           <div class="reports-toolbar">
             <label class="field field--light">
-              <span>Keyword</span>
-              <input name="search" value="${escapeAttr(state.filters.search)}" placeholder="Search by title, district, or summary">
+              <span>Szukaj</span>
+              <input name="search" value="${escapeAttr(state.filters.search)}" placeholder="Tytuł, lokalizacja lub opis">
             </label>
 
             <label class="field field--light">
               <span>Status</span>
               <select name="status_select">
-                <option value="">All statuses</option>
+                <option value="">Wszystkie statusy</option>
                 ${statuses.map((status) => `
                   <option value="${escapeAttr(status.name)}"${state.filters.status === status.name ? ' selected' : ''}>
                     ${escapeHtml(statusLabels[status.name] || titleCase(status.name))}
@@ -256,9 +249,9 @@
             </label>
 
             <label class="field field--light">
-              <span>Category</span>
+              <span>Kategoria</span>
               <select name="category_select">
-                <option value="">All districts</option>
+                <option value="">Wszystkie kategorie</option>
                 ${categories.map((category) => `
                   <option value="${escapeAttr(category.id)}"${state.filters.category_id === String(category.id) ? ' selected' : ''}>
                     ${escapeHtml(category.name)}
@@ -267,16 +260,9 @@
               </select>
             </label>
 
-            <label class="field field--light">
-              <span>Window</span>
-              <select name="window" disabled>
-                <option>Last 30 Days</option>
-              </select>
-            </label>
-
             <div class="reports-toolbar__actions">
-              <button class="ui-btn ui-btn--secondary" type="reset">Clear</button>
-              <button class="ui-btn ui-btn--primary" type="submit">Apply</button>
+              <button class="ui-btn ui-btn--secondary" type="reset">Wyczyść</button>
+              <button class="ui-btn ui-btn--primary" type="submit">Zastosuj</button>
             </div>
           </div>
         </form>
@@ -348,121 +334,99 @@
 
     const data = await requestJson('/api/categories');
     const categories = Array.isArray(data.categories) ? data.categories : [];
-    const featuredCategory = categories[0]?.name || 'Public Disturbance';
+    const featuredCategory = categories[0]?.name || 'Porządek publiczny';
 
     renderPage(pageTitle(page), `
       <section class="page-shell page-shell--report">
         <div class="page-head page-head--report">
           <div>
-            <p class="page-eyebrow">New Report</p>
-            <h1>New Report</h1>
-            <p class="page-subtitle">Structure the report the way dispatch needs it.</p>
+            <p class="page-eyebrow">Nowe zgłoszenie</p>
+            <h1>Nowe zgłoszenie</h1>
+            <p class="page-subtitle">Opisz, co się wydarzyło i gdzie. Dodawanie załączników oraz tryb anonimowy nie są dostępne w tej wersji.</p>
           </div>
         </div>
 
         <div class="report-layout">
           <section class="surface-card surface-card--padded">
-            <div class="step-tabs">
-              <div class="step-tab is-active"><span>1</span><strong>Details</strong></div>
-              <div class="step-tab"><span>2</span><strong>Location</strong></div>
-              <div class="step-tab"><span>3</span><strong>Submit</strong></div>
-            </div>
-
             <form id="report-form" class="report-form-grid" novalidate>
               <div class="form-block">
-                <p class="card-eyebrow">Incident Intelligence</p>
-                <h2>Describe the incident</h2>
+                <p class="card-eyebrow">Szczegóły zgłoszenia</p>
+                <h2>Opisz, co się wydarzyło</h2>
+                <p class="support-copy">Zachowaj krótki tytuł, użyj opisu do podania kontekstu i wpisz możliwie najdokładniejszą lokalizację.</p>
               </div>
 
-              ${fieldGroup('title', 'Title', 'Brief subject of the report', 'text', true)}
+              ${fieldGroup('title', 'Tytuł', 'Krótki temat zgłoszenia', 'text', true)}
 
               <label class="field field--light">
-                <span>Category</span>
+                <span>Kategoria</span>
                 <select name="category_id" required>
-                  <option value="">Select category</option>
+                  <option value="">Wybierz kategorię</option>
                   ${categories.map((category) => `<option value="${escapeAttr(category.id)}">${escapeHtml(category.name)}</option>`).join('')}
                 </select>
                 <small class="field-error" data-error-for="category_id"></small>
               </label>
 
               <label class="field field--light field--wide">
-                <span>Description</span>
-                <textarea name="description" rows="6" placeholder="Detail the nature of the incident, what happened, and any response needs." required></textarea>
+                <span>Opis</span>
+                <textarea name="description" rows="6" placeholder="Opisz charakter incydentu, przebieg zdarzenia i ewentualne potrzeby reakcji." required></textarea>
                 <small class="field-error" data-error-for="description"></small>
               </label>
 
               <label class="field field--light field--wide">
-                <span>Location</span>
-                <input name="location" type="text" placeholder="Enter street address or coordinates" required>
+                <span>Lokalizacja</span>
+                <input name="location" type="text" placeholder="Podaj adres lub współrzędne" required>
                 <small class="field-error" data-error-for="location"></small>
               </label>
 
-              <div class="field field--light field--wide">
-                <span>Evidence Photos</span>
-                <div class="upload-placeholder">
-                  <strong>Drop files here or click to upload</strong>
-                  <p>Initial visual placeholder only. No upload pipeline is wired yet.</p>
-                </div>
-              </div>
-
-              <label class="toggle-card field--wide">
-                <input type="checkbox" name="anonymous" value="1">
-                <span class="toggle-card__switch" aria-hidden="true"></span>
-                <div>
-                  <strong>Anonymous submission</strong>
-                  <p>Visual-only preference for the Figma-aligned first pass.</p>
-                </div>
-              </label>
-
               <div class="form-actions form-actions--end field--wide">
-                <a class="ui-btn ui-btn--secondary" href="/incidents">Cancel</a>
-                <button class="ui-btn ui-btn--primary" type="submit">Submit Report</button>
+                <a class="ui-btn ui-btn--secondary" href="/incidents">Anuluj</a>
+                <button class="ui-btn ui-btn--primary" type="submit">Wyślij zgłoszenie</button>
               </div>
               <div class="form-message" data-form-message></div>
             </form>
           </section>
 
           <aside class="stack-column">
-            <section class="surface-card surface-card--padded surface-card--dark">
-              <div class="card-head card-head--compact">
-                <div>
-                  <p class="card-eyebrow">Preview</p>
-                  <h2>Safe Work</h2>
-                </div>
-              </div>
-              ${incidentMedia({ id: 2 }, 'preview')}
-              <div class="preview-copy">
-                <span>${escapeHtml(featuredCategory)}</span>
-                <strong>Community Response Intake</strong>
-              </div>
-            </section>
-
             <section class="surface-card surface-card--padded">
               <div class="card-head card-head--compact">
                 <div>
-                  <p class="card-eyebrow">Filing Guidelines</p>
-                  <h2>Operator Notes</h2>
+                  <p class="card-eyebrow">Przed wysłaniem</p>
+                  <h2>Lista kontrolna</h2>
                 </div>
               </div>
               <ul class="guideline-list">
-                <li>Provide an accurate street reference and nearby landmark.</li>
-                <li>Prefer concrete descriptions over general statements.</li>
-                <li>Use evidence photos if the scene changes quickly.</li>
-                <li>Emergency cases should still be escalated by phone.</li>
+                <li>Użyj krótkiego tytułu, który jasno opisuje problem.</li>
+                <li>Jeśli to możliwe, podaj dokładne miejsce w polu lokalizacji.</li>
+                <li>Opisz, co się wydarzyło, a nie to, co Twoim zdaniem było przyczyną.</li>
+                <li>W pilnych sytuacjach awaryjnych najpierw skontaktuj się z odpowiednimi służbami.</li>
               </ul>
             </section>
 
             <section class="surface-card surface-card--padded">
               <div class="card-head card-head--compact">
                 <div>
-                  <p class="card-eyebrow">Response Window</p>
-                  <h2>Current SLA</h2>
+                  <p class="card-eyebrow">Kategorie</p>
+                  <h2>Dostępne typy zgłoszeń</h2>
                 </div>
               </div>
-              <div class="sla-meter">
-                <strong>12 min</strong>
-                <span>Average first review for newly submitted records.</span>
+              <div class="info-list">
+                ${categories.length ? categories.slice(0, 6).map((category) => `
+                  <div class="info-list__row">
+                    <span>${escapeHtml(category.name)}</span>
+                    <strong>${escapeHtml(category.name === featuredCategory ? 'Sugerowana' : 'Dostępna')}</strong>
+                  </div>
+                `).join('') : '<p class="support-copy">Brak dostępnych kategorii.</p>'}
               </div>
+            </section>
+
+            <section class="surface-card surface-card--padded">
+              <div class="card-head card-head--compact">
+                <div>
+                  <p class="card-eyebrow">Po wysłaniu</p>
+                  <h2>Co dalej</h2>
+                </div>
+              </div>
+              <p class="support-copy">Zgłoszenie od razu pojawi się na liście. Moderatorzy i administratorzy będą mogli je przejrzeć, zmienić status i dodać notatki do historii.</p>
             </section>
           </aside>
         </div>
@@ -518,32 +482,31 @@
       <section class="page-shell page-shell--detail">
         <div class="detail-layout">
           <section class="surface-card surface-card--padded detail-story">
-            ${incidentMedia(incident, 'hero')}
-
             <div class="detail-story__header">
               <div class="detail-story__meta">
                 <div>
                   <div class="detail-title-row">
                     ${statusPill(incident.status_name || 'new')}
-                    ${softPill(incident.category_name || 'Public Safety')}
+                    ${softPill(incident.category_name || 'Bezpieczeństwo publiczne')}
                   </div>
                   <h1>${escapeHtml(incident.title || 'Bez tytułu')}</h1>
+                  <p class="detail-lead">Zgłoszono ${escapeHtml(formatDate(incident.created_at))} przez ${escapeHtml(incident.reporter_name || 'Nieznany użytkownik')}</p>
                 </div>
-                <div class="detail-date">${escapeHtml(formatDate(incident.created_at))}</div>
+                <div class="detail-date">Zaktualizowano ${escapeHtml(formatDate(incident.updated_at))}</div>
               </div>
 
               <div class="detail-columns">
                 <div class="detail-copy">
-                  <p class="card-eyebrow">Incident Description</p>
-                  <h2>Incident Description</h2>
+                  <p class="card-eyebrow">Opis</p>
+                  <h2>Opis zgłoszenia</h2>
                   <p>${escapeHtml(incident.description || 'Brak opisu')}</p>
                 </div>
 
                 <div class="detail-facts">
-                  <div class="detail-fact"><span>Area</span><strong>${escapeHtml(districtLabel(incident.location || 'Unknown area'))}</strong></div>
-                  <div class="detail-fact"><span>Reporter</span><strong>${escapeHtml(incident.reporter_name || 'Unknown')}</strong></div>
-                  <div class="detail-fact"><span>Location</span><strong>${escapeHtml(incident.location || 'Brak lokalizacji')}</strong></div>
-                  <div class="detail-fact"><span>Updated</span><strong>${escapeHtml(formatDate(incident.updated_at))}</strong></div>
+                  <div class="detail-fact"><span>Obszar</span><strong>${escapeHtml(districtLabel(incident.location || 'Nieznany obszar'))}</strong></div>
+                  <div class="detail-fact"><span>Zgłaszający</span><strong>${escapeHtml(incident.reporter_name || 'Nieznany użytkownik')}</strong></div>
+                  <div class="detail-fact"><span>Lokalizacja</span><strong>${escapeHtml(incident.location || 'Brak lokalizacji')}</strong></div>
+                  <div class="detail-fact"><span>Zaktualizowano</span><strong>${escapeHtml(formatDate(incident.updated_at))}</strong></div>
                 </div>
               </div>
             </div>
@@ -551,78 +514,54 @@
             <section class="detail-section">
               <div class="card-head">
                 <div>
-                  <p class="card-eyebrow">Intelligence Updates</p>
-                  <h2>Incident Updates</h2>
+                  <p class="card-eyebrow">Historia</p>
+                  <h2>Zmiany statusu</h2>
                 </div>
               </div>
               ${history.length ? renderTimeline(history, false) : renderEmptyState('Brak historii', 'Nie zapisano jeszcze żadnych zmian.')}
             </section>
-
-            <div class="detail-inputbar">
-              <span>Add an intelligence update...</span>
-              <button type="button" class="detail-inputbar__action">Send</button>
-            </div>
           </section>
 
           <aside class="detail-rail">
-            <section class="surface-card surface-card--padded surface-card--dark">
+            <section class="surface-card surface-card--padded">
               <div class="card-head card-head--compact">
                 <div>
-                  <p class="card-eyebrow">Map</p>
-                  <h2>View Area Map</h2>
+                  <p class="card-eyebrow">Podsumowanie</p>
+                  <h2>Podsumowanie zgłoszenia</h2>
                 </div>
               </div>
-              <div class="map-preview">
-                <div class="map-preview__grid"></div>
+              <div class="summary-list">
+                <div class="summary-list__row"><span>Status</span><strong>${escapeHtml(statusLabels[incident.status_name] || titleCase(incident.status_name || 'new'))}</strong></div>
+                <div class="summary-list__row"><span>Priorytet</span><strong>${escapeHtml(inferPriorityLabel(incident))}</strong></div>
+                <div class="summary-list__row"><span>Kategoria</span><strong>${escapeHtml(incident.category_name || 'Brak')}</strong></div>
+                <div class="summary-list__row"><span>Obszar</span><strong>${escapeHtml(districtLabel(incident.location || 'Nieznany obszar'))}</strong></div>
               </div>
-              <a class="ui-btn ui-btn--secondary ui-btn--full" href="/incidents">View Area Map</a>
             </section>
 
             <section class="surface-card surface-card--padded">
               <div class="card-head card-head--compact">
                 <div>
-                  <p class="card-eyebrow">Similar Reports Nearby</p>
-                  <h2>Nearby Cases</h2>
+                  <p class="card-eyebrow">Status</p>
+                  <h2>Zaktualizuj zgłoszenie</h2>
                 </div>
               </div>
-              ${similar.length ? `
-                <div class="similar-grid">
-                  ${similar.map((item) => similarCard(item)).join('')}
-                </div>
-              ` : renderEmptyState('Brak podobnych zgłoszeń', 'Nie udało się znaleźć zbliżonych przypadków.')}
-            </section>
-
-            <section class="surface-card surface-card--padded surface-card--dark">
-              <div class="card-head card-head--compact">
-                <div>
-                  <p class="card-eyebrow">Case Management</p>
-                  <h2>Escalate Report</h2>
-                </div>
-              </div>
-
-              <div class="summary-list">
-                <div class="summary-list__row"><span>Status</span><strong>${escapeHtml(statusLabels[incident.status_name] || titleCase(incident.status_name || 'new'))}</strong></div>
-                <div class="summary-list__row"><span>Priority</span><strong>${escapeHtml(inferPriorityLabel(incident))}</strong></div>
-                <div class="summary-list__row"><span>Category</span><strong>${escapeHtml(incident.category_name || 'Brak')}</strong></div>
-              </div>
-
               ${permissions.can_change_status ? `
                 <form id="incident-admin-form" class="stack-form" novalidate>
-                  <label class="field field--light field--inverse">
+                  <label class="field field--light">
                     <span>Status</span>
                     <select name="status_id" required>
                       ${statuses.map((status) => `<option value="${escapeAttr(status.id)}"${String(incident.status_id) === String(status.id) ? ' selected' : ''}>${escapeHtml(statusLabels[status.name] || titleCase(status.name))}</option>`).join('')}
                     </select>
                     <small class="field-error" data-error-for="status_id"></small>
                   </label>
-                  <label class="field field--light field--inverse">
-                    <span>Internal Note</span>
-                    <textarea name="admin_note" rows="4" placeholder="Add note for the incident log"></textarea>
+                  <label class="field field--light">
+                    <span>Notatka wewnętrzna</span>
+                    <textarea name="admin_note" rows="4" placeholder="Dodaj notatkę do historii zgłoszenia"></textarea>
                     <small class="field-error" data-error-for="admin_note"></small>
                   </label>
                   <div class="form-actions form-actions--stack">
-                    <button class="ui-btn ui-btn--primary ui-btn--full" type="submit">Save Update</button>
-                    <a class="ui-btn ui-btn--secondary ui-btn--full" href="/incidents">Export Dossier</a>
+                    <button class="ui-btn ui-btn--primary ui-btn--full" type="submit">Zapisz zmianę</button>
+                    <a class="ui-btn ui-btn--secondary ui-btn--full" href="/incidents">Wróć do zgłoszeń</a>
                   </div>
                   <div class="form-message" data-form-message></div>
                 </form>
@@ -632,6 +571,20 @@
                   <p>Możesz śledzić historię i wrócić do listy zgłoszeń.</p>
                 </div>
               `}
+            </section>
+
+            <section class="surface-card surface-card--padded">
+              <div class="card-head card-head--compact">
+                <div>
+                  <p class="card-eyebrow">Powiązane zgłoszenia</p>
+                  <h2>Podobne sprawy</h2>
+                </div>
+              </div>
+              ${similar.length ? `
+                <div class="similar-grid">
+                  ${similar.map((item) => similarCard(item)).join('')}
+                </div>
+              ` : renderEmptyState('Brak podobnych zgłoszeń', 'Nie udało się znaleźć zbliżonych przypadków.')}
             </section>
           </aside>
         </div>
@@ -677,37 +630,40 @@
       <section class="page-shell page-shell--admin">
         <div class="page-head page-head--dashboard">
           <div>
-            <p class="page-eyebrow">Admin Control</p>
-            <h1>Role Management Center</h1>
-            <p class="page-subtitle">Control permissions, review activity, and update roles without reloads.</p>
+            <p class="page-eyebrow">Administracja</p>
+            <h1>Administracja</h1>
+            <p class="page-subtitle">Zarządzaj rolami kont i kontroluj zasady dostępu.</p>
           </div>
           <div class="page-actions">
-            <a class="ui-btn ui-btn--secondary" href="/dashboard">Dashboard</a>
-            <a class="ui-btn ui-btn--primary" href="/incidents/report">Generate Report</a>
+            <a class="ui-btn ui-btn--secondary" href="/dashboard">Panel</a>
+            <a class="ui-btn ui-btn--primary" href="/incidents">Zgłoszenia</a>
           </div>
         </div>
 
         <section class="metrics-grid metrics-grid--compact">
-          ${countsByRole.map((row) => metricCard(titleCase(row.role_name || ''), row.users_count ?? 0, 'active accounts', 'metric-card--orange')).join('')}
+          ${countsByRole.map((row) => metricCard(roleLabels[row.role_name] || titleCase(row.role_name || ''), row.users_count ?? 0, 'aktywnych kont', 'metric-card--orange')).join('')}
         </section>
 
         <div class="dashboard-layout">
           <section class="surface-card surface-card--padded">
             <div class="card-head">
               <div>
-                <p class="card-eyebrow">Controls</p>
-                <h2>Access Overview</h2>
+                <p class="card-eyebrow">Zasady</p>
+                <h2>Zmiany ról</h2>
               </div>
             </div>
-            <div class="admin-board">
-              <div class="admin-board__hero">
-                <div class="admin-board__label">Operational KPI</div>
-                <strong>Roles and incident flow</strong>
-                <p>Quick reference to current access policies and response ownership.</p>
+            <div class="admin-notes">
+              <div class="admin-note">
+                <strong>W systemie musi pozostać co najmniej jeden administrator.</strong>
+                <p>Usunięcie ostatniego administratora zablokowałoby kolejne zmiany dostępu.</p>
               </div>
-              <div class="admin-board__items">
-                <div class="admin-board__item"><span>Queue Control</span><strong>Role changes without reload</strong></div>
-                <div class="admin-board__item"><span>Policy Note</span><strong>System must keep one admin</strong></div>
+              <div class="admin-note">
+                <strong>Zmiany są stosowane od razu.</strong>
+                <p>Aktualizacja roli zapisuje się bez przeładowania strony i będzie widoczna po odświeżeniu.</p>
+              </div>
+              <div class="admin-note">
+                <strong>${escapeHtml(users.length)} ${users.length === 1 ? 'konto znajduje się' : 'konta znajdują się'} w systemie.</strong>
+                <p>${escapeHtml(countsByRole.length)} ${countsByRole.length === 1 ? 'typ roli jest obecnie przypisany' : 'typy ról są obecnie przypisane'}.</p>
               </div>
             </div>
           </section>
@@ -715,10 +671,10 @@
           <section class="surface-card surface-card--padded">
             <div class="card-head">
               <div>
-                <p class="card-eyebrow">Users</p>
-                <h2>Change Roles</h2>
+                <p class="card-eyebrow">Użytkownicy</p>
+                <h2>Zmień role</h2>
               </div>
-              <span class="card-meta">No reload</span>
+              <span class="card-meta">Bez przeładowania</span>
             </div>
             ${users.length ? `
               <div class="user-stack">
@@ -763,7 +719,7 @@
         <aside class="app-sidebar">
           <div class="sidebar-brand">
             <div class="sidebar-brand__name">SAFECITY</div>
-            <div class="sidebar-brand__sub">Vigilant city systems</div>
+            <div class="sidebar-brand__sub">Miejski system zgłoszeń</div>
           </div>
 
           <nav class="sidebar-nav" aria-label="Nawigacja główna">
@@ -771,31 +727,26 @@
           </nav>
 
           <div class="sidebar-footer">
-            <a class="sidebar-alert" href="/incidents/report">Emergency Alert</a>
-            <a class="sidebar-link" href="/dashboard">Support</a>
+            <a class="sidebar-alert" href="/incidents/report">Pilne zgłoszenie</a>
             <form class="sidebar-logout" action="/logout" method="post">
               <input type="hidden" name="_csrf" value="${escapeAttr(csrfToken)}">
-              <button type="submit" class="sidebar-link sidebar-link--button">Logout</button>
+              <button type="submit" class="sidebar-link sidebar-link--button">Wyloguj</button>
             </form>
           </div>
         </aside>
 
         <div class="app-stage">
           <header class="app-topbar">
-            <label class="topbar-search">
-              <span class="topbar-search__icon" aria-hidden="true">${iconMarkup('search')}</span>
-              <input type="search" placeholder="${escapeAttr(searchPlaceholderFor(section))}" disabled>
-            </label>
-
             <div class="topbar-context" aria-label="Current section">
               <span class="topbar-context__page">${escapeHtml(topbarContextLabel(section))}</span>
               <span class="topbar-context__meta">${escapeHtml(roleLabels[user.role] || titleCase(user.role || ''))}</span>
             </div>
 
-            <div class="topbar-actions">
-              ${topbarActionButton('notifications', 'Notifications')}
-              ${topbarActionButton('settings', 'Settings')}
-              ${topbarActionButton('location', 'Location')}
+            <div class="topbar-userbar">
+              <div class="topbar-usertext">
+                <strong>${escapeHtml(user.name || 'Użytkownik')}</strong>
+                <span>${escapeHtml(user.email || '')}</span>
+              </div>
               <div class="topbar-user">
                 <span>${escapeHtml(initialsForUser(user.name || user.email || 'SC'))}</span>
               </div>
@@ -828,7 +779,7 @@
         <div class="empty-state empty-state--error">
           <h2>Wystąpił problem</h2>
           <p>${escapeHtml(typeof error === 'string' ? error : error?.message || 'Nie udało się wczytać danych.')}</p>
-          <a class="ui-btn ui-btn--primary" href="/dashboard">Wróć do dashboardu</a>
+          <a class="ui-btn ui-btn--primary" href="/dashboard">Wróć do panelu</a>
         </div>
       </section>
     `;
@@ -854,13 +805,13 @@
   }
 
   function incidentCard(incident) {
-    const category = incident.category_name || 'Other';
+    const category = incident.category_name || 'Inne';
     const priority = inferPriorityLabel(incident);
+    const reporter = incident.reporter_name || 'Nieznany użytkownik';
 
     return `
       <article class="report-card">
         <a class="report-card__link" href="/incidents/${escapeHtml(incident.id)}">
-          ${incidentMedia(incident, 'card')}
           <div class="report-card__body">
             <div class="report-card__meta">
               <div>
@@ -871,9 +822,19 @@
             </div>
             <h3>${escapeHtml(incident.title || 'Bez tytułu')}</h3>
             <p>${escapeHtml(truncateText(incident.description || '', 132))}</p>
-            <div class="report-card__footer">
-              <span>${escapeHtml(districtLabel(incident.location || 'Unknown district'))}</span>
-              <span>${escapeHtml(priority)}</span>
+            <div class="report-card__facts">
+              <div class="report-card__fact">
+                <span>Obszar</span>
+                <strong>${escapeHtml(districtLabel(incident.location || 'Nieznana dzielnica'))}</strong>
+              </div>
+              <div class="report-card__fact">
+                <span>Priorytet</span>
+                <strong>${escapeHtml(priority)}</strong>
+              </div>
+              <div class="report-card__fact">
+                <span>Zgłaszający</span>
+                <strong>${escapeHtml(reporter)}</strong>
+              </div>
             </div>
           </div>
         </a>
@@ -888,10 +849,10 @@
           <thead>
             <tr>
               <th>ID</th>
-              <th>Category</th>
-              <th>Location</th>
-              <th>Date Reported</th>
-              <th>Priority</th>
+              <th>Kategoria</th>
+              <th>Lokalizacja</th>
+              <th>Data zgłoszenia</th>
+              <th>Priorytet</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -899,8 +860,8 @@
             ${incidents.slice(0, 6).map((incident) => `
               <tr>
                 <td><a class="table-link" href="/incidents/${escapeHtml(incident.id)}">#INC-${escapeHtml(incident.id)}</a></td>
-                <td>${escapeHtml(incident.category_name || 'Public Safety')}</td>
-                <td>${escapeHtml(districtLabel(incident.location || 'Unknown'))}</td>
+                <td>${escapeHtml(incident.category_name || 'Bezpieczeństwo publiczne')}</td>
+                <td>${escapeHtml(districtLabel(incident.location || 'Nieznana lokalizacja'))}</td>
                 <td>${escapeHtml(shortDate(incident.created_at))}</td>
                 <td>${escapeHtml(inferPriorityLabel(incident))}</td>
                 <td>${statusPill(incident.status_name || 'new')}</td>
@@ -993,9 +954,9 @@
   function similarCard(item) {
     return `
       <a class="similar-card" href="/incidents/${escapeHtml(item.id)}">
-        ${incidentMedia(item, 'thumb')}
         <div class="similar-card__body">
           <strong>${escapeHtml(item.title || 'Bez tytułu')}</strong>
+          <span>${escapeHtml(districtLabel(item.location || 'Nieznany obszar'))}</span>
           <span>${escapeHtml(relativeAge(item.created_at))}</span>
         </div>
       </a>
@@ -1013,6 +974,7 @@
           </div>
         </div>
         <div class="user-card__stats">
+          <span>${escapeHtml(roleLabels[row.role_name] || titleCase(row.role_name || ''))}</span>
           <span>${escapeHtml(row.incidents_count ?? 0)} zgłoszeń</span>
           <span>${escapeHtml(row.active_incidents_count ?? 0)} aktywnych</span>
         </div>
@@ -1025,19 +987,19 @@
           </label>
           <button class="ui-btn ui-btn--secondary" type="submit">Zapisz</button>
         </form>
-        <div class="form-message" data-role-message="${escapeHtml(row.id)}"></div>
-      </article>
-    `;
+      <div class="form-message" data-role-message="${escapeHtml(row.id)}"></div>
+    </article>
+  `;
   }
 
   function renderSidebarNav(active) {
     const items = [
-      ['dashboard', '/dashboard', 'Dashboard', 'dashboard'],
-      ['incidents', '/incidents', 'Reports', 'reports'],
-      ['report', '/incidents/report', 'New Entry', 'report'],
+      ['dashboard', '/dashboard', 'Panel', 'dashboard'],
+      ['incidents', '/incidents', 'Zgłoszenia', 'reports'],
+      ['report', '/incidents/report', 'Nowe zgłoszenie', 'report'],
     ];
     if (user.role === 'admin') {
-      items.push(['admin', '/admin', 'Admin', 'admin']);
+      items.push(['admin', '/admin', 'Administracja', 'admin']);
     }
 
     return items.map(([key, href, label, icon]) => `
@@ -1050,11 +1012,11 @@
 
   function renderMobileNav(active) {
     const items = [
-      ['dashboard', '/dashboard', 'Dashboard', 'dashboard'],
-      ['incidents', '/incidents', 'Reports', 'reports'],
-      ['report', '/incidents/report', 'Report', 'report'],
+      ['dashboard', '/dashboard', 'Panel', 'dashboard'],
+      ['incidents', '/incidents', 'Zgłoszenia', 'reports'],
+      ['report', '/incidents/report', 'Dodaj', 'report'],
     ];
-    if (user.role === 'admin') items.push(['admin', '/admin', 'Admin', 'admin']);
+    if (user.role === 'admin') items.push(['admin', '/admin', 'Administracja', 'admin']);
 
     return `
       <nav class="mobile-nav" aria-label="Nawigacja mobilna">
@@ -1068,21 +1030,13 @@
     `;
   }
 
-  function topbarActionButton(icon, label) {
-    return `
-      <button class="topbar-icon" type="button" aria-label="${escapeAttr(label)}">
-        ${iconMarkup(icon)}
-      </button>
-    `;
-  }
-
   function topbarContextLabel(section) {
     switch (section) {
-      case 'dashboard': return 'Command Center';
-      case 'incidents': return 'Incident Reports';
-      case 'report': return 'New Report';
-      case 'detail': return 'Case Overview';
-      case 'admin': return 'Admin Control';
+      case 'dashboard': return 'Panel';
+      case 'incidents': return 'Zgłoszenia';
+      case 'report': return 'Nowe zgłoszenie';
+      case 'detail': return 'Szczegóły zgłoszenia';
+      case 'admin': return 'Administracja';
       default: return 'SafeCity';
     }
   }
@@ -1123,37 +1077,6 @@
             <path d="M9 12h6"></path>
           </svg>
         `;
-      case 'search':
-        return `
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="6.5"></circle>
-            <path d="m16 16 4.5 4.5"></path>
-          </svg>
-        `;
-      case 'notifications':
-        return `
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M8 17.5h8"></path>
-            <path d="M6.5 15.5h11l-1.2-1.8a4 4 0 0 1-.7-2.2V10a3.6 3.6 0 0 0-7.2 0v1.5a4 4 0 0 1-.7 2.2Z"></path>
-            <path d="M10 18a2 2 0 0 0 4 0"></path>
-          </svg>
-        `;
-      case 'settings':
-        return `
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4.5 7.5h15"></path>
-            <path d="M4.5 16.5h15"></path>
-            <circle cx="9" cy="7.5" r="2.5"></circle>
-            <circle cx="15" cy="16.5" r="2.5"></circle>
-          </svg>
-        `;
-      case 'location':
-        return `
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 20.5s5.5-4.7 5.5-9a5.5 5.5 0 1 0-11 0c0 4.3 5.5 9 5.5 9Z"></path>
-            <circle cx="12" cy="11.5" r="2.2"></circle>
-          </svg>
-        `;
       default:
         return '';
     }
@@ -1166,17 +1089,6 @@
     return incidents
       .filter((item) => item.id !== incident.id && (!incident.category_name || item.category_name === incident.category_name))
       .slice(0, 2);
-  }
-
-  function incidentMedia(incident, variant) {
-    const image = incidentImageUrl(incident);
-    return `<div class="incident-media incident-media--${escapeAttr(variant)}" style="background-image:url('${escapeAttr(image)}')"></div>`;
-  }
-
-  function incidentImageUrl(incident) {
-    const numericId = Number(incident?.id || 0);
-    const seed = numericId > 0 ? numericId : stringHash(`${incident?.category_name || ''}-${incident?.title || ''}`);
-    return incidentImages[Math.abs(seed) % incidentImages.length];
   }
 
   function fieldGroup(name, label, placeholder, type, light = false) {
@@ -1207,17 +1119,6 @@
   function navKeyForSection(section) {
     if (section === 'detail') return 'incidents';
     return section;
-  }
-
-  function searchPlaceholderFor(section) {
-    switch (section) {
-      case 'dashboard': return 'Search reports, officers, or locations...';
-      case 'incidents': return 'Search incidents, districts, or tags...';
-      case 'report': return 'New report intake...';
-      case 'detail': return 'Search updates, districts, or tags...';
-      case 'admin': return 'Search users or roles...';
-      default: return 'Search SafeCity...';
-    }
   }
 
   function statusTransition(fromStatus, toStatus) {
@@ -1298,7 +1199,7 @@
 
     if (response.status === 401 && payload?.redirect) {
       window.location.assign(payload.redirect);
-      throw new Error(payload.error || 'Authentication required.');
+      throw new Error(payload.error || 'Wymagane jest zalogowanie.');
     }
 
     if (!response.ok) {
@@ -1397,28 +1298,28 @@
 
   function inferPriorityLabel(incident) {
     const status = String(incident.status_name || '').toLowerCase();
-    if (status === 'new') return 'High';
-    if (status === 'in_progress') return 'Medium';
-    if (status === 'resolved') return 'Low';
-    return 'Medium';
+    if (status === 'new') return 'Wysoki';
+    if (status === 'in_progress') return 'Średni';
+    if (status === 'resolved') return 'Niski';
+    return 'Średni';
   }
 
   function relativeAge(value) {
-    if (!value) return 'just now';
+    if (!value) return 'przed chwilą';
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return 'recently';
+    if (Number.isNaN(date.getTime())) return 'niedawno';
     const deltaMs = Math.max(0, Date.now() - date.getTime());
     const deltaMinutes = Math.round(deltaMs / 60000);
-    if (deltaMinutes < 1) return 'just now';
-    if (deltaMinutes < 60) return `${deltaMinutes}m ago`;
+    if (deltaMinutes < 1) return 'przed chwilą';
+    if (deltaMinutes < 60) return `${deltaMinutes} min temu`;
     const deltaHours = Math.round(deltaMinutes / 60);
-    if (deltaHours < 24) return `${deltaHours}h ago`;
-    return `${Math.round(deltaHours / 24)}d ago`;
+    if (deltaHours < 24) return `${deltaHours} godz. temu`;
+    return `${Math.round(deltaHours / 24)} dni temu`;
   }
 
   function districtLabel(location) {
     const value = String(location || '').split(',')[0].trim();
-    return value || 'Unknown district';
+    return value || 'Nieznana dzielnica';
   }
 
   function initialsForUser(value) {
@@ -1428,12 +1329,4 @@
     return `${parts[0][0] || ''}${parts[1][0] || ''}`.toUpperCase();
   }
 
-  function stringHash(value) {
-    let hash = 0;
-    for (let index = 0; index < value.length; index += 1) {
-      hash = ((hash << 5) - hash) + value.charCodeAt(index);
-      hash |= 0;
-    }
-    return hash;
-  }
 })();
