@@ -1,34 +1,134 @@
 # SafeCity
 
-SafeCity to aplikacja PHP do zgłaszania i obsługi incydentów miejskich. Repozytorium zawiera działający przepływ logowania, role `citizen` i `admin`, dashboard, moduł incydentów oraz bazę PostgreSQL uruchamianą w Dockerze.
+SafeCity to aplikacja PHP do zgłaszania i obsługi incydentów miejskich. Projekt łączy backend w architekturze MVC, frontend renderowany po stronie klienta z użyciem JavaScript oraz bazę PostgreSQL uruchamianą w Dockerze.
 
-## Co działa
+## Cel projektu
 
-- autoryzacja: logowanie, rejestracja i wylogowanie,
-- role użytkowników: `citizen` i `admin`,
-- dashboard dla obu ról,
-- incydenty: lista, zgłoszenie i widok szczegółów,
-- panel admina: zarządzanie rolą użytkownika,
-- warstwa SQL: tabele historii statusów incydentu i transakcje po stronie repozytorium,
-- seed danych startowych dla kont testowych i słowników,
-- uruchomienie lokalne przez Docker Compose.
+Aplikacja realizuje temat miejskiego systemu zgłoszeń:
+
+- mieszkaniec może się zarejestrować, zalogować i dodać zgłoszenie,
+- administrator może przeglądać wszystkie sprawy, zmieniać ich status oraz zarządzać rolami użytkowników,
+- system przechowuje historię zmian statusów i podstawowe statystyki do panelu.
+
+## Stack technologiczny
+
+- `PHP 8` - backend, routing, kontrolery, logika sesji i autoryzacji
+- `PostgreSQL` - baza danych
+- `JavaScript` - warstwa SPA dla panelu aplikacji
+- `Fetch API` - komunikacja AJAX z endpointami `/api/...`
+- `HTML + CSS` - widoki logowania/rejestracji oraz layout aplikacji
+- `Docker Compose` - uruchamianie środowiska lokalnego
+- `Nginx` - serwer HTTP dla aplikacji
+
+## Architektura aplikacji
+
+Projekt jest zbudowany w modelu MVC z rozdzieleniem odpowiedzialności:
+
+- `Routing.php` - rejestracja i obsługa tras HTTP
+- `src/controllers/` - kontrolery aplikacji, autoryzacja, odpowiedzi JSON i renderowanie widoków
+- `src/repository/` - warstwa dostępu do danych oparta o PDO
+- `public/views/` - widoki HTML dla logowania, rejestracji i stron statusowych
+- `public/js/` - frontend panelu użytkownika i logiki AJAX
+- `docker/db/init/init.sql` - schemat, dane startowe, widoki, funkcje i trigger
+
+Przepływ danych wygląda następująco:
+
+`przeglądarka -> Routing -> Controller -> Repository -> PostgreSQL`
+
+Frontend po zalogowaniu działa jako prosty panel SPA:
+
+- `public/js/auth.js` obsługuje logowanie i rejestrację przez `fetch`,
+- `public/js/app.js` renderuje ekran panelu, listę zgłoszeń, formularz, szczegóły i administrację,
+- backend zwraca dane JSON z endpointów `/api/auth/*`, `/api/incidents/*`, `/api/dashboard/stats`, `/api/admin/users`.
+
+## Role użytkowników
+
+W systemie są co najmniej dwie role:
+
+- `citizen` - mieszkaniec
+- `admin` - administrator
+
+Uprawnienia są egzekwowane po stronie backendu przez sesję użytkownika i kontrolę roli. Projekt zawiera:
+
+- logowanie,
+- rejestrację,
+- wylogowanie,
+- sesję użytkownika,
+- CSRF token,
+- walidację danych,
+- haszowanie haseł.
 
 ## Funkcje aplikacji
 
-- `citizen` może się zarejestrować, zalogować, zobaczyć dashboard, zgłosić incydent i śledzić jego status oraz historię,
-- `admin` ma dostęp do panelu administracyjnego, listy incydentów, szczegółów zgłoszeń i zmiany roli użytkowników,
-- incydenty mają kategorię, lokalizację, opis, status, komentarze i historię zmian statusu,
-- zmiana statusu zapisuje wpis w `incident_status_history` w ramach transakcji,
-- dashboard korzysta z widoków SQL do prezentacji statystyk i aktywności.
+- logowanie, rejestracja i wylogowanie,
+- dashboard z podsumowaniem zgłoszeń,
+- lista zgłoszeń z filtrami,
+- tworzenie nowego zgłoszenia,
+- widok szczegółów zgłoszenia,
+- historia zmian statusów,
+- zmiana statusu sprawy przez administratora,
+- panel administracyjny do zarządzania rolami użytkowników.
 
-## Uruchomienie
+## Flow aplikacji
+
+### 1. Wejście do systemu
+
+Użytkownik trafia na ekran logowania albo rejestracji. Formularze są wysyłane asynchronicznie przez `Fetch API`, a po poprawnym logowaniu tworzona jest sesja.
+
+### 2. Panel główny
+
+Po zalogowaniu użytkownik trafia do panelu z podsumowaniem systemu: liczba zgłoszeń, ostatnie wpisy, aktywność i rozkład kategorii.
+
+### 3. Lista zgłoszeń
+
+Użytkownik może przejść do listy zgłoszeń, filtrować rekordy po statusie i kategorii oraz wyszukiwać po treści.
+
+### 4. Dodanie nowego zgłoszenia
+
+Formularz nowego zgłoszenia zapisuje dane incydentu do bazy. Nowy rekord otrzymuje status początkowy i wpis w historii statusów.
+
+### 5. Szczegóły sprawy
+
+Na ekranie szczegółów widać opis, lokalizację, zgłaszającego, historię zmian oraz podsumowanie zgłoszenia. Administrator może zmienić status i dodać notatkę.
+
+### 6. Administracja
+
+Administrator ma dostęp do panelu zarządzania użytkownikami i może zmieniać role bez przeładowania strony.
+
+## Zrzuty ekranu
+
+### Ekran logowania
+
+![Ekran logowania](docs/screenshots/login.png)
+
+### Panel główny
+
+![Panel główny](docs/screenshots/dashboard.png)
+
+### Lista zgłoszeń
+
+![Lista zgłoszeń](docs/screenshots/incidents.png)
+
+### Formularz nowego zgłoszenia
+
+![Formularz nowego zgłoszenia](docs/screenshots/report-form.png)
+
+### Szczegóły zgłoszenia
+
+![Szczegóły zgłoszenia](docs/screenshots/incident-detail.png)
+
+### Panel administracyjny
+
+![Panel administracyjny](docs/screenshots/admin.png)
+
+## Uruchomienie przez Docker
 
 Wymagania:
 
-- Docker Desktop lub Docker Engine,
-- Docker Compose v2.
+- Docker Desktop lub Docker Engine
+- Docker Compose v2
 
-Start:
+Uruchomienie:
 
 ```bash
 docker compose up --build
@@ -36,32 +136,32 @@ docker compose up --build
 
 Adresy po starcie:
 
-- aplikacja: `http://localhost:8080`,
-- pgAdmin: `http://localhost:5050`,
-- PostgreSQL z hosta: `localhost:5433`.
+- aplikacja: `http://localhost:8080`
+- pgAdmin: `http://localhost:5050`
+- PostgreSQL z hosta: `localhost:5433`
 
-Jeśli chcesz zresetować dane:
+Reset danych:
 
 ```bash
 docker compose down -v
 docker compose up --build
 ```
 
-## Dane dostępowe
+## Dane testowe
 
-pgAdmin:
-
-- email: `admin@example.com`,
-- hasło: `admin`.
-
-Konta seedowane w bazie:
+### Konta użytkowników
 
 | Rola | Email | Hasło |
 |---|---|---|
 | admin | `admin@safecity.pl` | `password` |
 | citizen | `jan@safecity.pl` | `password` |
 
-Dane połączeniowe do PostgreSQL:
+### pgAdmin
+
+- email: `admin@example.com`
+- hasło: `admin`
+
+### Połączenie z PostgreSQL
 
 | Parametr | Wartość |
 |---|---|
@@ -85,28 +185,54 @@ Najważniejsze tabele:
 - `incident_comments`
 - `incident_status_history`
 
-Najważniejsze widoki i elementy SQL:
+Najważniejsze elementy SQL:
 
-- `incidents_summary`,
-- `dashboard_stats`,
-- funkcja `update_timestamp()`,
-- funkcja `user_incident_count(uid, target_month)`,
-- trigger `trg_incidents_updated`.
+- widok `incidents_summary`
+- widok `dashboard_stats`
+- funkcja `update_timestamp()`
+- funkcja `user_incident_count(uid, target_month)`
+- trigger `trg_incidents_updated`
+- referencje z akcjami `RESTRICT`, `SET NULL`, `CASCADE`
 
-Szczegóły schematu są opisane w `docs/erd.md`.
+Schemat bazy i relacje:
 
-## Lista wymagań
+- ERD: [docs/erd.md](docs/erd.md)
+- eksport / inicjalizacja SQL: [docker/db/init/init.sql](docker/db/init/init.sql)
 
-- [x] logowanie i rejestracja,
-- [x] sesja użytkownika i CSRF,
-- [x] role `citizen` i `admin`,
-- [x] dashboard,
-- [x] lista incydentów,
-- [x] zgłoszenie incydentu,
-- [x] widok szczegółów incydentu,
-- [x] panel admina,
-- [x] zarządzanie rolą użytkownika,
-- [x] historia statusów incydentu,
-- [x] transakcje w repozytorium SQL,
-- [x] seed kont testowych i danych startowych,
-- [x] uruchomienie przez Docker Compose.
+## Struktura repozytorium
+
+```text
+.
+├── Routing.php
+├── docker/
+│   ├── db/
+│   ├── nginx/
+│   └── php/
+├── docs/
+│   ├── erd.md
+│   └── screenshots/
+├── public/
+│   ├── css/
+│   ├── js/
+│   └── views/
+└── src/
+    ├── controllers/
+    ├── repository/
+    └── utils/
+```
+
+## Podsumowanie wymagań
+
+Projekt zawiera:
+
+- dokumentację uruchomienia i działania systemu,
+- screeny interfejsu,
+- opis flow aplikacji,
+- Docker,
+- backend obiektowy w PHP,
+- PostgreSQL,
+- eksport bazy do `.sql`,
+- ERD,
+- sesję użytkownika, role i uprawnienia,
+- AJAX przez `Fetch API`,
+- widoki, funkcje, trigger i transakcje po stronie bazy / repozytorium.
