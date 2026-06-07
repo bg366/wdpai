@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- BINGO C2: token CSRF dla formularza rejestracji, wysylany przez JS w naglowku. -->
   <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
   <title>Rejestracja — SafeCity</title>
   <link rel="stylesheet" href="/public/css/main.css">
@@ -52,16 +53,17 @@
         <div class="alert alert--error hidden" id="general-error"></div>
 
         <form id="register-form" novalidate>
+          <!-- BINGO D2/B4: limity dlugosci i minimalna dlugosc hasla sa sprawdzane tez na serwerze. -->
           <div class="form-group">
             <label for="full_name">Imię i nazwisko</label>
-            <input type="text" id="full_name" name="full_name"
+            <input type="text" id="full_name" name="full_name" maxlength="100"
                    autocomplete="name" placeholder="Jan Kowalski" required>
             <span class="field-error" id="full_name-error"></span>
           </div>
 
           <div class="form-group">
             <label for="email">Adres email</label>
-            <input type="email" id="email" name="email"
+            <input type="email" id="email" name="email" maxlength="255"
                    autocomplete="email" placeholder="jan@przyklad.pl" required>
             <span class="field-error" id="email-error"></span>
           </div>
@@ -69,7 +71,7 @@
           <div class="form-group">
             <label for="password">Hasło <span class="label-hint">(min. 8 znaków)</span></label>
             <div class="input-with-action">
-              <input type="password" id="password" name="password"
+              <input type="password" id="password" name="password" maxlength="72"
                      autocomplete="new-password" placeholder="••••••••" required>
               <button type="button" class="input-action" data-toggle-password="password" aria-label="Pokaż hasło">Pokaż</button>
             </div>
@@ -79,7 +81,7 @@
           <div class="form-group">
             <label for="password_confirm">Powtórz hasło</label>
             <div class="input-with-action">
-              <input type="password" id="password_confirm" name="password_confirm"
+              <input type="password" id="password_confirm" name="password_confirm" maxlength="72"
                      autocomplete="new-password" placeholder="••••••••" required>
               <button type="button" class="input-action" data-toggle-password="password_confirm" aria-label="Pokaż hasło">Pokaż</button>
             </div>

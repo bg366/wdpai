@@ -3,6 +3,7 @@
    Obsługa formularzy logowania i rejestracji (Fetch API)
    =================================================================== */
 
+// BINGO B2/C2: token CSRF pobieramy z meta tagu i wysylamy z formularzy auth.
 const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
 /* --- Helpers ----------------------------------------------------- */

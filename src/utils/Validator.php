@@ -14,6 +14,7 @@ class Validator
 
     public function email(string $field, string $value): static
     {
+        // BINGO C1: walidacja formatu email po stronie serwera.
         if (!isset($this->errors[$field]) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
             $this->errors[$field] = 'Nieprawidłowy adres email.';
         }
@@ -22,6 +23,7 @@ class Validator
 
     public function minLength(string $field, string $value, int $min): static
     {
+        // BINGO B4: serwer sprawdza minimalna zlozonosc/dlugosc hasla.
         if (!isset($this->errors[$field]) && mb_strlen($value) < $min) {
             $this->errors[$field] = "Minimalna długość to {$min} znaków.";
         }
@@ -30,6 +32,7 @@ class Validator
 
     public function maxLength(string $field, string $value, int $max): static
     {
+        // BINGO D2: serwer ogranicza maksymalna dlugosc danych wejsciowych.
         if (!isset($this->errors[$field]) && mb_strlen($value) > $max) {
             $this->errors[$field] = "Maksymalna długość to {$max} znaków.";
         }

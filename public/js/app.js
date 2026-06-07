@@ -1277,6 +1277,7 @@
   }
 
   function escapeHtml(value) {
+    // BINGO D4: kazda wartosc z API trafiajaca do HTML jest escapowana przed wstawieniem.
     return String(value ?? '')
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')

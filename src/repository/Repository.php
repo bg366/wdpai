@@ -28,6 +28,7 @@ abstract class Repository
 
     protected function query(string $sql, array $params = []): PDOStatement
     {
+        // BINGO A1: wszystkie parametry SQL ida przez prepared statements i bindValue.
         $stmt = $this->db()->prepare($sql);
         foreach ($params as $key => $value) {
             $type = match (true) {

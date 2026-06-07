@@ -46,6 +46,7 @@ class Routing
     private static function registerRoutes(): void
     {
         // Page routes
+        // BINGO A2: GET tylko renderuje widoki logowania i rejestracji.
         self::get('',                   'AuthController',      'loginPage');
         self::get('login',              'AuthController',      'loginPage');
         self::get('register',           'AuthController',      'registerPage');
@@ -59,6 +60,7 @@ class Routing
         self::get('admin/dashboard',    'AdminController',     'index');
 
         // Auth API
+        // BINGO A2: dane logowania/rejestracji sa obslugiwane wylacznie przez POST.
         self::post('api/auth/login',    'AuthController', 'login');
         self::post('api/auth/logout',   'AuthController', 'logout');
         self::post('api/auth/register', 'AuthController', 'register');
